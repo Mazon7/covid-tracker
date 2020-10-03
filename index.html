@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>COVID Tracker</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/components/dropdown.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/components/transition.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="new-style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://kit.fontawesome.com/c939d0e917.js"></script>
+    <script src="map-style.js"></script>
+    <script src="script.js"></script>
+    <script src="charts.js"></script>
+  </head>
+
+  <body>
+    <select id="theme">
+      <option value="auto">Auto</option>
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+    </select>
+    <div class="container-fluid main">
+      <div class="row">
+        <div class="col-8">
+          <div class="row header-container">
+            <div class="col title-container">
+              <h2>Covid-19 Tracker</h2>
+            </div>
+            <div class="col search-container">
+              <!-- <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"
+                    ><i class="fas fa-search"></i
+                  ></span>
+                </div>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Search Location"
+                  aria-label="Search Location"
+                  aria-describedby="basic-addon1"
+                />
+              </div> -->
+              <div class="ui fluid search selection dropdown">
+                <input type="hidden" name="country" />
+                <i class="dropdown icon"></i>
+                <div class="default text">Select Country</div>
+                <div class="menu"></div>
+              </div>
+            </div>
+          </div>
+          <div class="row stats-container">
+            <div class="col">
+              <div class="card button" onclick="changeDataSelection('cases')">
+                <div class="card-body">
+                  <h6 class="card-title">Coronavirus Cases</h6>
+                  <h3 class="card-subtitle mb-2 total-number">1,436,886</h3>
+                  <p class="text-muted font-weight-bold total cases-total">
+                    .text-muted
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div
+                class="card button"
+                onclick="changeDataSelection('recovered')"
+              >
+                <div class="card-body">
+                  <h6 class="card-title">Recovered</h6>
+                  <h3 class="card-subtitle mb-2 recovered-number">302,964</h3>
+                  <p class="text-muted font-weight-bold total recovered-total">
+                    .text-muted
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card button" onclick="changeDataSelection('deaths')">
+                <div class="card-body">
+                  <h6 class="card-title">Deaths</h6>
+                  <h3 class="card-subtitle mb-2 deaths-number">82,191</h3>
+                  <p class="text-muted font-weight-bold total deaths-total">
+                    .text-muted
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row map-container mt-3">
+            <div class="col">
+              <div id="map"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-4 side-panel-container my-3">
+          <div class="cases-table-container">
+            <h4>Live Cases by Country</h4>
+            <div class="country-data">
+              <table class="table table-responsive">
+                <tbody id="table-data"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="chart-container mt-3">
+            <h4>Total Cases Globally</h4>
+            <div class="btn-group">
+              <button
+                class="btn btn-light btn-sm dropdown-toggle"
+                type="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Line chart
+              </button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">Line chart</a>
+                <a class="dropdown-item" href="#">Pie chart</a>
+              </div>
+            </div>
+            <div class="linear-chart p-3">
+              <canvas id="myChart"></canvas>
+            </div>
+            <div class="pie-chart p-3 hide">
+              <canvas id="myPieChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <footer>
+      <h3>THIS IS FOOTER</h3>
+    </footer> -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAry30jFyaBHq3JNPV3NF6DVcVqVD9Afc&callback=initMap&language=en"
+      async
+      defer
+    ></script>
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/components/dropdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/components/transition.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+  </body>
+</html>

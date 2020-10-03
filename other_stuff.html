@@ -1,0 +1,62 @@
+<div class="data-info">
+  <div id="country-data">
+    <div class="table-responsive">
+      <table class="table table-light" id="table">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">Country name</th>
+            <th scope="col">Cases</th>
+            <th scope="col">Active</th>
+            <th scope="col">Recovered</th>
+            <th scope="col">Deaths</th>
+          </tr>
+        </thead>
+        <tbody id="table-data">
+          <tr>
+            <th scope="row">1</th>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <th scope="row">2</th>
+            <td>Jacob</td>
+            <td>Thornton</td>
+            <td>12</td>
+          </tr>
+          <tr>
+            <th scope="row">3</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>123</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="chart-data">
+  <canvas id="myChart"></canvas>
+  <input
+    id="period"
+    type="number"
+    min="1"
+    onkeypress="return event.charCode >= 48"
+    placeholder="Enter number of days"
+    oninput="enableButton(this)"
+  />
+  <input
+    id="submit-period"
+    type="submit"
+    value="✔️"
+    onclick="getSpecifiedData(this)"
+    disabled
+  />
+  <input
+    id="reset-to-default"
+    type="submit"
+    value="Reset to default"
+    onclick=""
+  />
+</div>

@@ -1,0 +1,137 @@
+.body {
+  background-color: #f5f6fa;
+}
+
+.main {
+  height: 100vh;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+}
+
+.button {
+  cursor: pointer;
+  opacity: 1;
+  transition: 0.3s;
+}
+
+.button:hover {
+  opacity: 0.6;
+  box-shadow: 0 5px #666;
+}
+
+.button:active {
+  transform: translateY(4px);
+}
+
+.map-container {
+  height: 500px;
+}
+
+.header-container {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+#map {
+  border-radius: 12px;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+.chart-container {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.chart-container .col {
+  background-color: #eff2f6;
+  border-radius: 12px;
+}
+
+.linear-chart {
+  height: 100%;
+}
+
+.title-container h2 {
+  color: #fc3c3c;
+  margin-bottom: 0;
+}
+
+.title-container h4 {
+  text-transform: uppercase;
+  color: #cacbcf;
+}
+
+.stats-container .card {
+  border-radius: 12px;
+  background-color: white;
+  box-shadow: 0 0 8px -4px rgba(0, 0, 0, 0.5);
+}
+
+.stats-container .card-body {
+  padding: 1rem;
+}
+
+.stats-container .card-title {
+  color: #695d5c;
+  font-weight: 400;
+}
+
+.stats-container .card-subtitle {
+  font-weight: 600;
+}
+
+.stats-container .total {
+  font-size: 0.8rem;
+}
+
+.side-panel-container {
+  height: 712px;
+  background-color: white;
+  border-bottom-left-radius: 30px;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
+  box-shadow: 0 0 8px -4px rgba(0, 0, 0, 0.5);
+  padding-top: 15px;
+}
+
+.hide {
+  display: none;
+}
+
+.cases-table-container h4,
+.chart-container h4 {
+  color: #6a5d5d;
+  font-weight: 400;
+}
+
+.country-data .table td {
+  padding: 0.5rem;
+  border: none;
+}
+
+.total-number {
+  color: #cc1034;
+}
+
+.recovered-number {
+  color: #7fd922;
+}
+
+.deaths-number {
+  color: #fa5575;
+}
+
+/* .tab-selection {
+  height: 10px;
+  background-color: #cc1034;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+} */
