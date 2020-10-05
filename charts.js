@@ -1,3 +1,4 @@
+//  Build Chart Data
 const buildChartData = (data) => {
   let chartData = [];
   for (let date in data.cases) {
@@ -10,6 +11,7 @@ const buildChartData = (data) => {
   return chartData;
 };
 
+// Build Pie Chart
 const buildPieChart = (data) => {
   var ctx = document.getElementById("myPieChart").getContext("2d");
   var chart = new Chart(ctx, {
@@ -33,6 +35,7 @@ const buildPieChart = (data) => {
   });
 };
 
+// Build Line Chart
 const buildChart = (chartData) => {
   var timeFormat = "MM/DD/YYYY";
   var ctx = document.getElementById("myChart").getContext("2d");
@@ -85,24 +88,34 @@ const buildChart = (chartData) => {
   });
 };
 
-// Switching charts NEED TO IMPROOVE BECAUSE IT DOES NOT WORK SO FAR
+// Switching charts function NEED TO FIX
 const switchCharts = () => {
-  var dropdownItem1 = document.querySelectorAll(".dropdown-item")[0].innerHTML;
-  var dropdownItem2 = document.querySelectorAll(".dropdown-item")[1].innerHTML;
+  // Get charts
   var linearChart = document.getElementsByClassName("linear-chart")[0];
   var pieChart = document.getElementsByClassName("pie-chart")[0];
+
   $(function () {
-    $(document.getElementsByClassName("dropdown-item")[0]).on(
+    $(document.getElementsByClassName("dropdown-item")).on(
       "click",
       function () {
-        document.querySelector(".btn-light").innerHTML = dropdownItem1;
+        // Get dropdown value
+        var dropdownItem = document.querySelectorAll(".dropdown-item")[0]
+          .innerHTML;
+        switch (dropdownItem) {
+          case "Line chart":
+            document.querySelectorAll(".dropdown-item")[0].innerHTML =
+              "Pie Chart";
+            document.querySelector(".btn-light").innerHTML = "Line chart";
+            dropdownItem = "Pie Chart";
+            break;
+          case "Pie chart":
+            document.querySelectorAll(".dropdown-item")[0].innerHTML =
+              "Line chart";
+            document.querySelector(".btn-light").innerHTML = "Pie chart";
+            dropdownItem = "Line chart";
+            break;
+        }
         linearChart.classList.toggle("hide");
-      }
-    );
-    $(document.getElementsByClassName("dropdown-item")[1]).on(
-      "click",
-      function () {
-        document.querySelector(".btn-light").innerHTML = dropdownItem2;
         pieChart.classList.toggle("hide");
       }
     );
