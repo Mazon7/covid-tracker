@@ -116,7 +116,7 @@
 }
 
 .total-number {
-  color: #cc1034;
+  color: #ffd514; 
 }
 
 .recovered-number {
@@ -124,7 +124,7 @@
 }
 
 .deaths-number {
-  color: #fa5575;
+  color: #F30936;
 }
 
 /* .tab-selection {

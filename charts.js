@@ -20,7 +20,7 @@ const buildPieChart = (data) => {
       datasets: [
         {
           data: [data.active, data.recovered, data.deaths],
-          backgroundColor: ["#cc1034", "#7fd922", "#fa5575"],
+          backgroundColor: ["#ffd514", "#7fd922", "#F30936"],
         },
       ],
       // These labels appear in the legend and in the tooltips when hovering different arcs
@@ -87,24 +87,8 @@ const buildChart = (chartData) => {
 
 // Switching charts NEED TO IMPROOVE BECAUSE IT DOES NOT WORK SO FAR
 const switchCharts = () => {
-  var dropdownItem1 = document.querySelectorAll(".dropdown-item")[0].innerHTML;
-  var dropdownItem2 = document.querySelectorAll(".dropdown-item")[1].innerHTML;
   var linearChart = document.getElementsByClassName("linear-chart")[0];
   var pieChart = document.getElementsByClassName("pie-chart")[0];
-  $(function () {
-    $(document.getElementsByClassName("dropdown-item")[0]).on(
-      "click",
-      function () {
-        document.querySelector(".btn-light").innerHTML = dropdownItem1;
-        linearChart.classList.toggle("hide");
-      }
-    );
-    $(document.getElementsByClassName("dropdown-item")[1]).on(
-      "click",
-      function () {
-        document.querySelector(".btn-light").innerHTML = dropdownItem2;
-        pieChart.classList.toggle("hide");
-      }
-    );
-  });
+  pieChart.classList.toggle("hide");
+  linearChart.classList.toggle("hide");
 };
