@@ -1,3 +1,16 @@
+// Initialize dropdown for countries
+const initDropdown = (searchList) => {
+  $(".ui.dropdown").dropdown({
+    values: searchList,
+    onChange: function (value, text) {
+      // Show respective info Label in the box
+      console.log(value, text);
+      // Get the data for Country when it's selected
+      changeCountrySelection(value);
+    },
+  });
+};
+
 window.onload = () => {
   getCountryData();
   getHistoricalData();
@@ -7,10 +20,12 @@ window.onload = () => {
 };
 
 // Declare main variables
-var map;
-var infoWindow;
+var map; // Google map
 let coronaGlobalData;
-let mapCircles = [];
+let mapMarkers = []; // Markers array
+let infoWindows = []; // Infowindows array
+let countrySelection = "worldwide";
+
 const worldwideSelection = {
   name: "Worldwide",
   value: "www",
@@ -35,10 +50,6 @@ var casesTypeColors = {
   },
 };
 
-// "#cc1034"
-// "#7fd922"
-// "#fa5575"
-
 // Initialize the Map
 function initMap() {
   map = new google.maps.Map(document.getElementById("map"), {
@@ -51,14 +62,26 @@ function initMap() {
     disableDefaultUI: true,
     styles: mapStyle, // using custom style
   });
-  infoWindow = new google.maps.InfoWindow();
+  // infoWindow = new google.maps.InfoWindow();
 }
 
-// Clear the circles from the map
-const changeDataSelection = (casesType) => {
-  showDataOnMap(coronaGlobalData, casesType);
-  // clearTheMap(); FOR CIRCLE FUNCTIONALITY
+// Show the data for the chosen country
+const changeCountrySelection = (countryCode) => {
+  if (countryCode !== countrySelection) {
+    if (countryCode == worldwideSelection.value) {
+      getWorldCoronaData();
+    } else {
+      getCountryWorldData(countryCode);
+    }
+    countrySelection = countryCode;
+  }
 };
+
+// Clear the circles from the map
+// const changeDataSelection = (casesType) => {
+//   showDataOnMap(coronaGlobalData, casesType);
+//   // clearTheMap(); FOR CIRCLE FUNCTIONALITY
+// };
 
 // Clear the map for CIRCLE FUNCTIONALITY
 // const clearTheMap = () => {
@@ -67,16 +90,7 @@ const changeDataSelection = (casesType) => {
 //   }
 // };
 
-// Initialize dropdown for countries
-const initDropdown = (searchList) => {
-  $(".ui.dropdown").dropdown({
-    values: searchList,
-    onChange: function (value, text) {
-      console.log(value);
-    },
-  });
-};
-
+// Create a SearchList of Countries for the Dropdown
 const setSearchList = (data) => {
   let searchList = [];
   searchList.push(worldwideSelection);
@@ -96,23 +110,52 @@ const getCountryData = () => {
     })
     .then((data) => {
       showDataInTable(data);
-      var table = $("#table").DataTable({
-        pagingType: "numbers",
-      }); // implementing sorting and filtering for
+      // var table = $("#table-data").DataTable({
+      //   pagingType: "numbers",
+      // }); // implementing sorting and filtering for
       coronaGlobalData = data;
       setSearchList(data);
       showDataOnMap(data);
     });
 };
 
-// const getCountryWorldData = (countryData) => {
-//   const url = "https://disease.sh/v3/covid-19/countries/" + countryIso;
-//   fetch(url)
-//   .then((response) =>)= {
-//     return response.json()
-//     /// need to finish thi function
-//   }
-// }
+// Get data for Specific Counr
+const getCountryWorldData = (countryData) => {
+  const url = `https://disease.sh/v3/covid-19/countries/${countryData}`;
+  fetch(url)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      // Get the marker for chosen Country from Dropdown
+      var marker = mapMarkers.find((obj) => {
+        return obj.Aa === `Click to show the data for ${data.country}`;
+      });
+
+      // Get the InfoWindow for chosen Country from Dropdown
+      var infoWindow = infoWindows.filter(
+        ({ ["content"]: content }) => content && content.includes(data.country)
+      );
+
+      // Hide All Previously opened Windows
+      hideAllInfoWindows(infoWindows);
+      infoWindow[0].open({
+        anchor: marker,
+        map,
+      });
+      infoWindow[0].opened = true;
+
+      let countryCenterNew = {
+        lat: data.countryInfo.lat + 5,
+        lng: data.countryInfo.long,
+      };
+      map.setZoom(4);
+      map.panTo(countryCenterNew);
+
+      // Show the data in the Tab for the Specific Countries
+      setStatsData(data);
+    });
+};
 
 const getWorldCoronaData = () => {
   fetch("https://disease.sh/v3/covid-19/all")
@@ -195,9 +238,9 @@ const getSpecifiedData = () => {
 //   });
 // };
 
-const openInfoWindow = () => {
-  infoWindow.open(map);
-};
+// const openInfoWindow = () => {
+//   infoWindow.open(map);
+// };
 
 const showDataOnMap = (data, casesType = "cases") => {
   data.map((country) => {
@@ -205,19 +248,6 @@ const showDataOnMap = (data, casesType = "cases") => {
       lat: country.countryInfo.lat,
       lng: country.countryInfo.long,
     };
-
-    // CIRCLE
-    // Google Circle
-    // var countryCircle = new google.maps.Circle({
-    //   strokeColor: casesTypeColors[casesType],
-    //   strokeOpacity: 0.8,
-    //   strokeWeight: 2,
-    //   fillColor: casesTypeColors[casesType],
-    //   fillOpacity: 0.35,
-    //   map: map,
-    //   center: countryCenter,
-    //   radius: Math.sqrt(country[casesType]) * 50,
-    // });
 
     // Declare Icon for the Markers for DOM
     const casesIcon = document.createElement("div");
@@ -230,9 +260,6 @@ const showDataOnMap = (data, casesType = "cases") => {
       borderColor: casesTypeColors[casesType].borderColor,
     });
 
-    // FFD514
-    // 16db26
-
     // Declare main marker objects
     var marker = new google.maps.marker.AdvancedMarkerView({
       map,
@@ -241,10 +268,7 @@ const showDataOnMap = (data, casesType = "cases") => {
       title: `Click to show the data for ${country.country}`,
     });
 
-    // Adding all circles to the array
-    mapCircles.push(marker);
-
-    // Define country data from API in a html variable defined by string literals
+    // // Define country data from API in a html variable defined by string literals
     var html = `
       <div class="info-container">
         <div class="info-flag" style="background-image: url(${country.countryInfo.flag});">
@@ -273,34 +297,41 @@ const showDataOnMap = (data, casesType = "cases") => {
       position: marker.center,
     });
 
-    // add listener on InfoWindow for mouseover event
-    // google.maps.event.addListener(marker, "mouseover", function () {
-    //   // create half second delay before showing infowIndow
-    //   mouseoverTimeoutId = setTimeout(function () {
-    //     // Close active window if exists - [one might expect this to be default behaviour no?]
-    //     if (activeInfoWindow != null) activeInfoWindow.close();
-
-    //     // Close info Window on mouseclick if already opened
-    //     infoWindow.close();
-
-    //     // Open new InfoWindow for mouseover event
-    //     infoWindow.open(map, marker);
-
-    //     // Store new open InfoWindow in global variable
-    //     activeInfoWindow = infoWindow;
-    //   }, 0);
-    // });
+    // Adding all markers to the array
+    mapMarkers.push(marker);
+    // Adding all infoWindows to the array
+    infoWindows.push(infoWindow);
 
     marker.addListener("click", () => {
+      hideAllInfoWindows(infoWindows);
       infoWindow.open({
         anchor: marker,
         map,
       });
+
+      // Set Opened state for InfoWindow as true
+      infoWindow.opened = true;
+      // Move Center of the Map to fit info Window
+      let countryCenterNew = {
+        lat: countryCenter.lat + 5,
+        lng: countryCenter.lng,
+      };
+      map.setZoom(4);
+      map.panTo(countryCenterNew);
     });
 
-    marker.addListener("mouseout", () => {
-      infoWindow.close();
-    });
+    // CIRCLE
+    // Google Circle
+    // var countryCircle = new google.maps.Circle({
+    //   strokeColor: casesTypeColors[casesType],
+    //   strokeOpacity: 0.8,
+    //   strokeWeight: 2,
+    //   fillColor: casesTypeColors[casesType],
+    //   fillOpacity: 0.35,
+    //   map: map,
+    //   center: countryCenter,
+    //   radius: Math.sqrt(country[casesType]) * 50,
+    // });
 
     // **** FOR CIRCLES **** //
     // Create info window on hover
@@ -316,7 +347,17 @@ const showDataOnMap = (data, casesType = "cases") => {
   });
 };
 
-// Store data in table below map
+// Hide all previously opened Info Windows
+function hideAllInfoWindows(infoWindows) {
+  infoWindows.forEach((infoWindow) => {
+    if (infoWindow.opened == true) {
+      infoWindow.close();
+      infoWindow.opened == false;
+    }
+  });
+}
+
+// Store data in the table right of the map
 const showDataInTable = (data) => {
   var html = "";
   data.forEach((country) => {

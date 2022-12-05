@@ -85,7 +85,6 @@ const buildChart = (chartData) => {
   });
 };
 
-// Switching charts NEED TO IMPROOVE BECAUSE IT DOES NOT WORK SO FAR
 const switchCharts = () => {
   var linearChart = document.getElementsByClassName("linear-chart")[0];
   var pieChart = document.getElementsByClassName("pie-chart")[0];
