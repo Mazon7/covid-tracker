@@ -1,3 +1,11 @@
+window.onload = () => {
+  getCountryData();
+  getHistoricalData();
+  getWorldCoronaData();
+  //clickByEnter();
+  switchCharts();
+};
+
 // Initialize dropdown for countries
 const initDropdown = (searchList) => {
   $(".ui.dropdown").dropdown({
@@ -9,14 +17,6 @@ const initDropdown = (searchList) => {
       changeCountrySelection(value);
     },
   });
-};
-
-window.onload = () => {
-  getCountryData();
-  getHistoricalData();
-  getWorldCoronaData();
-  //clickByEnter();
-  switchCharts();
 };
 
 // Declare main variables
@@ -32,6 +32,7 @@ const worldwideSelection = {
   selected: true,
 };
 
+// Decalre casesType Colors and Icons
 var casesTypeColors = {
   cases: {
     icon: '<i class="fa-solid fa-virus-covid"></i>',
@@ -56,13 +57,12 @@ function initMap() {
     center: { lat: 40.849121, lng: -99.680929 },
     zoom: 2.5,
     mapId: "some",
-    // mapId: "80a8ed72e83eca2c",
+    // mapId: "80a8ed72e83eca2c"
 
     // Disable the zoom etc from map
     disableDefaultUI: true,
     styles: mapStyle, // using custom style
   });
-  // infoWindow = new google.maps.InfoWindow();
 }
 
 // Show the data for the chosen country
@@ -78,10 +78,10 @@ const changeCountrySelection = (countryCode) => {
 };
 
 // Clear the circles from the map
-// const changeDataSelection = (casesType) => {
-//   showDataOnMap(coronaGlobalData, casesType);
-//   // clearTheMap(); FOR CIRCLE FUNCTIONALITY
-// };
+const changeDataSelection = (casesType) => {
+  showDataOnMap(coronaGlobalData, casesType);
+  // clearTheMap(); //FOR CIRCLE FUNCTIONALITY
+};
 
 // Clear the map for CIRCLE FUNCTIONALITY
 // const clearTheMap = () => {
@@ -128,8 +128,13 @@ const getCountryWorldData = (countryData) => {
     })
     .then((data) => {
       // Get the marker for chosen Country from Dropdown
+      // CONSIDER TO OPTIMIZE (now property names of marker always change by Google)
       var marker = mapMarkers.find((obj) => {
-        return obj.Aa === `Click to show the data for ${data.country}`;
+        for (property in obj) {
+          if (obj[property] === `Click to show the data for ${data.country}`) {
+            return obj;
+          }
+        }
       });
 
       // Get the InfoWindow for chosen Country from Dropdown
@@ -139,6 +144,7 @@ const getCountryWorldData = (countryData) => {
 
       // Hide All Previously opened Windows
       hideAllInfoWindows(infoWindows);
+
       infoWindow[0].open({
         anchor: marker,
         map,
@@ -238,10 +244,6 @@ const getSpecifiedData = () => {
 //   });
 // };
 
-// const openInfoWindow = () => {
-//   infoWindow.open(map);
-// };
-
 const showDataOnMap = (data, casesType = "cases") => {
   data.map((country) => {
     let countryCenter = {
@@ -268,7 +270,7 @@ const showDataOnMap = (data, casesType = "cases") => {
       title: `Click to show the data for ${country.country}`,
     });
 
-    // // Define country data from API in a html variable defined by string literals
+    // Define country data from API in a html variable defined by string literals
     var html = `
       <div class="info-container">
         <div class="info-flag" style="background-image: url(${country.countryInfo.flag});">
