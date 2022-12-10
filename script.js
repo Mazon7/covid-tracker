@@ -22,6 +22,7 @@ const initDropdown = (searchList) => {
 // Declare main variables
 var map; // Google map
 let coronaGlobalData;
+let coronaHystoricalData;
 let mapMarkers = []; // Markers array
 let infoWindows = []; // Infowindows array
 let countrySelection = "worldwide";
@@ -37,16 +38,19 @@ var casesTypeColors = {
   cases: {
     icon: '<i class="fa-solid fa-virus-covid"></i>',
     background: "#ffd514",
+    half_op: "rgba(255, 213, 20, 0.5)",
     borderColor: "#ff8300",
   },
   recovered: {
     icon: '<i class="fa-solid fa-heart"></i>',
     background: "#7fd922",
+    half_op: "rgba(127, 217, 34, 0.5)",
     borderColor: "#12B820",
   },
   deaths: {
     icon: '<i class="fa-solid fa-skull"></i>',
     background: "#F30936",
+    half_op: "rgba(251, 68, 67, 0.5)",
     borderColor: "#A20D29",
   },
 };
@@ -80,6 +84,13 @@ const changeCountrySelection = (countryCode) => {
 // Clear the circles from the map
 const changeDataSelection = (casesType) => {
   showDataOnMap(coronaGlobalData, casesType);
+  let chartData = buildChartData(coronaHystoricalData, casesType);
+  updateData(
+    chartData,
+    casesTypeColors[casesType].background,
+    casesTypeColors[casesType].half_op
+  );
+
   // clearTheMap(); //FOR CIRCLE FUNCTIONALITY
 };
 
@@ -170,7 +181,7 @@ const getWorldCoronaData = () => {
     })
     .then((data) => {
       // Build Pie Chart on the map
-      buildPieChart(data);
+      // buildPieChart(data);
       setStatsData(data);
     });
 };
@@ -193,12 +204,13 @@ const setStatsData = (data) => {
 };
 
 const getHistoricalData = () => {
-  fetch("https://disease.sh/v3/covid-19/historical/all?lastdays=60")
+  fetch("https://disease.sh/v3/covid-19/historical/all?lastdays=120")
     .then((response) => {
       return response.json();
     })
     .then((data) => {
-      let chartData = buildChartData(data);
+      coronaHystoricalData = data;
+      let chartData = buildChartData(data, "cases");
       buildChart(chartData);
     });
 };
@@ -310,6 +322,9 @@ const showDataOnMap = (data, casesType = "cases") => {
         anchor: marker,
         map,
       });
+
+      // Set data for the tabs when InfoWindow is cliked on the Map
+      setStatsData(country);
 
       // Set Opened state for InfoWindow as true
       infoWindow.opened = true;
